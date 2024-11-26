@@ -3,4 +3,22 @@
 2. Seed refers to the RNG of the program.
 3. Epochs are the runs of the training program. More Epochs mean better accuracy, but takes much longer (my computer ran 1 epoch per hour)
 4. Number of Batches refer to the processing speed. A higher batch size means the program will run each epoch faster. However it will require much more out of your computer. Unless you run tensorflow using a video card, I do not recommend a batch size larger than 16.
-5. Once training is finished, a files folder with a
+5. Once training is finished, a files folder containing files called model.keras and memory.txt will be created. This is the training data and a memory text file with the seed and epoch number. Do Not Edit or Remove memory.txt or else you will either get an error, or the test will be inaccurate to the training set.
+
+## Testing the Model
+1. Run test.py
+2. This will create a results directory. This will contain all images resulted from testing the model.
+3. Each image has three portions, each will be directed labelled on the image:
+   - the original image of the brain scan.
+   - the mask (the segmentation of the tumor)
+   - the generated prediction
+
+## Video Demostration Stuff
+For the sake of video demoing, please use the link below to download both the model.keras, and memory.txt file I have generated so you don't have to wait several hours for your own.
+Download both files and insert/replace into the files folder.
+
+The settings I used:
+  Seed: 42
+  Num_Epochs: 3
+  
+https://drive.google.com/drive/folders/1CCUQnYiJK0u2ZaeysIYTmEJ-Pun8ZQk6?usp=sharing
