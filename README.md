@@ -1,4 +1,4 @@
-<!---Creating a Model--->
+## Creating a Model
 1. Run train.py first, and input the necessary information.
 2. Seed refers to the RNG of the program.
 3. Epochs are the runs of the training program. More Epochs mean better accuracy, but takes much longer (my computer ran 1 epoch per hour)
