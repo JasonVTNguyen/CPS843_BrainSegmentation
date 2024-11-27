@@ -34,6 +34,12 @@ def save_results(image, mask, y_pred, save_image_path):
     cat_images = np.concatenate([image, line, mask, line, y_pred], axis=1)
     cv2.imwrite(save_image_path, cat_images)
 
+def calcMSE(mask, pred):
+    error = np.sum((mask.astype('float') - pred.astype('float')) ** 2)
+    error /= float(mask.shape[0] * mask.shape[1])
+
+    return error
+
 if __name__ == "__main__":
     
     memory = read_memory()
@@ -73,7 +79,7 @@ if __name__ == "__main__":
         image = cv2.putText(image, text="Image from Dataset",org=(10,240),fontFace=3, fontScale=.5,color=(255,255,255),thickness=1)
         mask = cv2.putText(mask, text="Mask from Dataset",org=(10,240),fontFace=3, fontScale=.5,color=(255,255,255),thickness=1)
         y_pred = cv2.putText(y_pred, text="Predicted Segmentation",org=(10,240),fontFace=3, fontScale=.5,color=(255,255,255),thickness=1)
-
+        y_pred = cv2.putText(y_pred, text="MSE: "+str(calcMSE(mask,y_pred)),org=(10,30),fontFace=3, fontScale=.5,color=(255,255,255),thickness=1)
 
         save_image_path = os.path.join("results", name)
         save_results(image, mask, y_pred, save_image_path)
