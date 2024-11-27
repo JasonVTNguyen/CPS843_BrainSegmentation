@@ -8,10 +8,11 @@
 ## Testing the Model
 1. Run test.py
 2. This will create a results directory. This will contain all images resulted from testing the model.
-3. Each image has three portions, each will be directed labelled on the image:
+3. Each image has four portions, each will be directed labelled on the image:
    - the original image of the brain scan.
    - the mask (the segmentation of the tumor)
    - the generated prediction
+   - the MSE (Mean Squared Error)
 
 ## Video Demostration Stuff
 For the sake of video demoing, please use the link below to download both the model.keras, and memory.txt file I have generated so you don't have to wait several hours for your own.
