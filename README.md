@@ -13,6 +13,11 @@
    - the mask (the segmentation of the tumor)
    - the generated prediction
    - the MSE (Mean Squared Error)
+4. test.py will now output four accuracy scores in the command prompt:
+   - Precision: How many correct drawn pixels vs how many incorrect drawn pixels
+   - Recall: How many correct pixels vs how many pixels missed
+   - F1: Average of the previous two
+   - Jaccard: How similar the prediction and mask are, basically Accuracy.
 
 ## Video Demostration Stuff
 For the sake of video demoing, please use the link below to download both the model.keras, and memory.txt file I have generated so you don't have to wait several hours for your own.
