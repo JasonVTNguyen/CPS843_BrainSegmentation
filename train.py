@@ -19,25 +19,27 @@ num_epochs = 1
 
 data_path = kagglehub.dataset_download("nikhilroxtomar/brain-tumor-segmentation")
 
+# Creates a directory if directory exists
 def create_dir(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-
-def load_dataset(path, split=0.2):
+# Loads the dataset, and splits the dataset into three sets: training set, testing set, and validation set
+def load_dataset(path, seed, split=0.2):
     images = sorted(glob(os.path.join(path, "images", "*.png")))
     masks = sorted(glob(os.path.join(path, "masks", "*.png")))
 
     split_size = int(len(images) * split)
 
-    X_train, X_valid = train_test_split(images, test_size=split_size, random_state=42)
-    y_train, y_valid = train_test_split(masks, test_size=split_size, random_state=42)
+    X_train, X_valid = train_test_split(images, test_size=split_size, random_state=seed)
+    y_train, y_valid = train_test_split(masks, test_size=split_size, random_state=seed)
     
-    X_train, X_test = train_test_split(X_train, test_size=split_size, random_state=42)
-    y_train, y_test = train_test_split(y_train, test_size=split_size, random_state=42)
+    X_train, X_test = train_test_split(X_train, test_size=split_size, random_state=seed)
+    y_train, y_test = train_test_split(y_train, test_size=split_size, random_state=seed)
 
     return (X_train, y_train), (X_valid, y_valid), (X_test, y_test)
 
+# Reads the image and returns the image as list
 def read_image(path):
     path = path.decode()
     x = cv2.imread(path, cv2.IMREAD_COLOR)
@@ -46,6 +48,7 @@ def read_image(path):
     x = x.astype(np.float32)
     return x
 
+# Reads the mask and returns the mask as list
 def read_mask(path):
     path = path.decode()
     x = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
@@ -55,6 +58,7 @@ def read_mask(path):
     x = np.expand_dims(x, axis=-1)
     return x
 
+# Transform the features of the image and masks
 def tf_parse(x, y):
     def _parse(x, y):
         x = read_image(x)
@@ -66,6 +70,7 @@ def tf_parse(x, y):
     y.set_shape([height, width, 1])
     return x, y
 
+# Takes dataset and batchs in order for training
 def tf_dataset(x, y, batch=2):
     dataset = tf.data.Dataset.from_tensor_slices((x , y))
     dataset = dataset.map(tf_parse)
@@ -73,6 +78,7 @@ def tf_dataset(x, y, batch=2):
     dataset = dataset.prefetch(10)
     return dataset
 
+# Generate the model
 def generate_model():
     np.random.seed(seed)
     tf.random.set_seed(seed)
@@ -85,15 +91,18 @@ def generate_model():
     csv_path = os.path.join("files", "log.csv")
     
     data_path = kagglehub.dataset_download("nikhilroxtomar/brain-tumor-segmentation")
-    (X_train, y_train), (X_valid, y_valid), (X_test, y_test) = load_dataset(data_path)
+    (X_train, y_train), (X_valid, y_valid), (X_test, y_test) = load_dataset(data_path, seed)
     print("Location where the dataset is downloaded: ", data_path)
 
+    # Create the training and validation set for training the model
     train_dataset = tf_dataset(X_train, y_train, batch=batch_size)
     valid_dataset = tf_dataset(X_valid, y_valid, batch=batch_size)
 
+    # Build the UNET model
     model = build_unet((height, width, 3))
     model.compile(loss=dice_loss, optimizer=Adam(learning_rate), metrics=[dice_coef])
 
+    # Callbacks to prevent overfitting and regulate training
     callbacks = [
         ModelCheckpoint(model_path, verbose=1, save_best_only=True),
         ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=5, min_lr=1e-7, verbose=1),
@@ -101,6 +110,7 @@ def generate_model():
         EarlyStopping(monitor='val_loss', patience=20, restore_best_weights=False),
     ]
 
+    # Apply model parameters
     model.fit(
         train_dataset,
         epochs=num_epochs,
@@ -108,12 +118,14 @@ def generate_model():
         callbacks=callbacks
     )
 
+# Writes a txt file called memory.txt: This file contains information for the seed, and number of epochs
 def write_memory(seed, epoch):
     filePath = os.path.join("files", "memory.txt")
     f = open(filePath,'w')
     f.write(str(seed)+'\n'+str(epoch))
     f.close()
 
+# Run this function when train.py is run from the command line.
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         seed = sys.argv[1]
@@ -121,7 +133,7 @@ if __name__ == "__main__":
         batch_size = sys.argv[2]
     if len(sys.argv) > 3:
         num_epochs = sys.argv[3]
-
+    # User Input Implementation on running train.py
     if len(sys.argv) == 1:
         while True:
             seed = input("Insert the seed, this determines the train, test, and validation split of the dataset (Leave blank for default: 0): ")
@@ -156,7 +168,9 @@ if __name__ == "__main__":
             except ValueError:
                 print("Error: Batch size needs to be an integer.")
                 continue
+        # Writes the seed and number of epochs to memory.txt
         write_memory(seed, num_epochs)
+    # Generate model and begin training
     generate_model()
    
 
