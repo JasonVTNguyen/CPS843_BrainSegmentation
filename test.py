@@ -90,7 +90,7 @@ if __name__ == "__main__":
         image = cv2.putText(image, text="Image from Dataset",org=(10,240),fontFace=3, fontScale=.5,color=(255,255,255),thickness=1)
         maskCP = cv2.putText(mask.copy(), text="Mask from Dataset",org=(10,240),fontFace=3, fontScale=.5,color=(255,255,255),thickness=1)
         y_predCP = cv2.putText(y_pred.copy(), text="Predicted Segmentation",org=(10,240),fontFace=3, fontScale=.5,color=(255,255,255),thickness=1)
-        y_predCP = cv2.putText(y_pred.copy(), text="MSE: "+str(calcMSE(mask,y_pred)),org=(10,30),fontFace=3, fontScale=.5,color=(255,255,255),thickness=1)
+        y_predCP = cv2.putText(y_predCP, text="MSE: "+str(calcMSE(mask,y_pred)),org=(10,30),fontFace=3, fontScale=.5,color=(255,255,255),thickness=1)
 
         # Save image and write to the results folder
         save_image_path = os.path.join("results", name)
