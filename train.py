@@ -83,8 +83,6 @@ def generate_model():
     np.random.seed(seed)
     tf.random.set_seed(seed)
 
-    create_dir("files")
-
     learning_rate = 1e-4
     
     model_path = os.path.join("files", "model.keras")
@@ -127,6 +125,9 @@ def write_memory(seed, epoch):
 
 # Run this function when train.py is run from the command line.
 if __name__ == "__main__":
+
+    create_dir("files")
+
     if len(sys.argv) > 1:
         seed = sys.argv[1]
     if len(sys.argv) > 2:
